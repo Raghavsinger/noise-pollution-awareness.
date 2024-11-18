@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noise Pollution Awareness</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="icon" href="https://cdn.pixabay.com/photo/2018/08/04/15/34/noise-pollution-3583915_1280.png" type="image/png">
+  <style>
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f6;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* Header Styling */
+
+    header h1 {
+      font-size: 2em;
+      font-weight: 700;
+      margin-bottom: 0.3em;
+      transition: transform 0.3s ease;
+    }
+
+    header p {
+      font-size: 1em;
+      font-weight: 500;
+      max-width: 600px;
+      margin: 0 auto;
+      transition: opacity 0.3s ease;
+      color: #ddd;
+    }
+
+    header:hover h1 {
+      transform: scale(1.05);
+    }
+
+    header:hover p {
+      opacity: 0.9;
+    }
+
+    /* Smooth Fade-in Animation */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Content Container */
+    .container {
+      max-width: 1210px;
+      margin: 1.5em auto;
+      padding: 1.5em;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      line-height: 1.6;
+    }
+
+    section {
+      margin-bottom: 2em;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 1.5em;
+      margin-bottom: 0.5em;
+      border-bottom: 2px solid #4a90e2;
+      padding-bottom: 0.3em;
+      transition: color 0.3s ease;
+    }
+
+    h2:hover {
+      color: #3ed0b9;
+    }
+
+    ul {
+      color: #5d5d5d;
+      font-size: 1em;
+    }
+
+    .button {
+      display: inline-block;
+      background: linear-gradient(to right, #4a90e2, #3ed0b9);
+      color: white;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+      margin-top: 1em;
+    }
+
+    .button:hover {
+      background: #3ed0b9;
+    }
+
+    /* Image Styling */
+    .section-image {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      margin: 1em 0;
+      transition: transform 0.4s ease;
+    }
+
+    .section-image:hover {
+      transform: scale(1.026);
+    }
+
+    /* Positioning the header and text */
+header {
+  position: relative;
+  text-align: center;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 1.5em;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(to right, #4a90e2, #3ed0b9);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Image Overlay Container */
+.image-overlay {
+  position: relative;
+}
+
+.section-image {
+  width: 100%;
+  border-radius: 10px;
+  /* Dim the image slightly */
+}
+
+/* Overlaying the keywords */
+.keyword {
+  position: absolute;
+  top: 30%;
+  color: whitesmoke;
+  font-size: 1.8em;
+  font-weight: bold;
+  background: black; /* Dark background for readability */
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+  transition: transform 0.3s ease;
+}
+
+/* Positioning each keyword */
+.keyword-left {
+  left: 20px;
+}
+
+.keyword-right {
+  right: 20px;
+}
+
+/* Hover effect */
+.keyword:hover {
+  transform: translateY(-5px);
+  background: rgba(0, 0, 0, 0.7);
+}
+#map, #data, #causes-effects {
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #indiaMap {
+            height: 500px;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        ul li strong {
+            color: #4CAF50;
+        }
+
+  </style>
+</head>
+<body>
+
+    <header>
+        <h1>Noise Pollution Awareness</h1>
+        <p>Discover how noise pollution affects health and environment across Indian cities.</p>
+      
+        <!-- Overlayed keywords -->
+        <div class="keyword keyword-left">Use Quieter Equipment</div>
+        <div class="keyword keyword-right">Plant More Trees</div>
+      
+        <!-- Header image with overlay class -->
+        <div class="image-overlay">
+          <img src="https://media.istockphoto.com/id/1144431793/photo/woman-covering-ears-irritated-with-noise-in-office-nervous-breakdown-at-work.jpg?s=612x612&w=0&k=20&c=E4bgTUgYMBpGxYJFzhxx4iOica_g_19lhjVy_kKTa3Y=" alt="City Noise" class="section-image">
+        </div>
+    </header>
+      
+    <div class="container">
+        <section>
+            <h2>Understanding Noise Pollution</h2>
+            <p>Noise pollution is the presence of excessive sound that causes harm to the environment, animals, and human health. Common sources include traffic, industries, and construction. The harmful effects of noise include stress, sleep disturbances, hearing impairment, and cognitive issues. Noise pollution, or sound pollution, is the propagation of noise or sound with ranging impacts on the activity of human or animal life, most of which are harmful to a degree. The source of outdoor noise worldwide is mainly caused by machines, transport and propagation systems.Poor urban planning may give rise to noise disintegration or pollution, side-by-side industrial and residential buildings can result in noise pollution in the residential areas. Some of the main sources of noise in residential areas include loud music, transportation (traffic, rail, airplanes, etc.), lawn care maintenance, construction, electrical generators, wind turbines, explosions and people.</p>
+        </section>
+
+        <!-- Noise Pollution Causes Section -->
+        <section id="causes">
+          <h2>Causes of Noise Pollution</h2>
+          <div class="info-box">
+              <p>Noise pollution in India is caused by a variety of factors including:</p>
+              <ul>
+                  <li><strong>Traffic:</strong> Overpopulation and increased vehicular traffic lead to noise from honking, engines, and tires.</li>
+                  <li><strong>Industrial Activities:</strong> Factories, construction sites, and machinery generate high noise levels.</li>
+                  <li><strong>Urbanization:</strong> The growth of cities increases human activity, leading to more noise.</li>
+                  <li><strong>Cultural Events:</strong> Festivals, weddings, and celebrations often contribute to noise in urban and rural areas.</li>
+              </ul>
+          </div>
+      </section>
+
+      <section>
+          <h2>Health Impacts of Noise Pollution</h2>
+          <ul>
+          <li><strong>Hearing Loss:</strong> Prolonged exposure to high decibel levels can lead to permanent hearing damage.</li>
+          <li><strong>Sleep Disturbance:</strong> Noisy environments disrupt sleep patterns, affecting physical and mental health.</li>
+          <li><strong>Increased Stress:</strong> Constant exposure to noise leads to stress and cardiovascular issues.</li>
+          <li><strong>Impaired Learning:</strong> Studies show that children in noisy environments have reduced learning capacity.</li>
+          </ul>
+          <img src="https://metalesa.com/wp-content/uploads/2024/05/Estres-contaminacion-acustica-1-1024x576.jpg" alt="Health Impact of Noise" class="section-image">
+      </section>
+
+        <section>
+            <h2>City Noise Levels Across India</h2>
+            <p>Noise pollution in Indian cities has become a significant concern due to urbanization, rising vehicular traffic, industrial activities, and construction. Cities like Delhi, Mumbai, Bengaluru, Kolkata, and Chennai frequently experience noise levels that exceed safe limits, especially during peak hours or festive celebrations. These elevated noise levels, often surpassing 80 dB, contribute to health issues such as hearing impairment, stress, sleep disturbances, and cardiovascular problems. While the government has established noise regulations and monitoring systems, enforcement remains a challenge. Public awareness and stricter regulations on honking, construction activities, and festivals can help mitigate noise pollution. The growing concern requires a collaborative approach, including citizen engagement and technological solutions, to improve urban living conditions and safeguard public health. Here's an interactive map showing the noise levels in major cities:</p>
+            <a href="#map" class="button">Explore the Map</a>
+        </section>
+        <!-- Interactive Map -->
+        <section id="map">
+            <h2>Noise Pollution Map of India</h2>
+            <div id="indiaMap"></div>
+        </section>
+
+        <section id="data">
+            <h2>Noise Pollution Data</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Average dB Level</th>
+                        <th>Main Source</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Andhra Pradesh</td><td>82 dB</td><td>Traffic</td></tr>
+                    <tr><td>Arunachal Pradesh</td><td>70 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Assam</td><td>76 dB</td><td>Industry</td></tr>
+                    <tr><td>Bihar</td><td>83 dB</td><td>Traffic</td></tr>
+                    <tr><td>Chhattisgarh</td><td>78 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Delhi</td><td>88 dB</td><td>Industrial</td></tr>
+                    <tr><td>Goa</td><td>74 dB</td><td>Tourism</td></tr>
+                    <tr><td>Gujarat</td><td>84 dB</td><td>Industry</td></tr>
+                    <tr><td>Haryana</td><td>85 dB</td><td>Traffic</td></tr>
+                    <tr><td>Himachal Pradesh</td><td>72 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Jharkhand</td><td>80 dB</td><td>Industry</td></tr>
+                    <tr><td>Karnataka</td><td>80 dB</td><td>Construction</td></tr>
+                    <tr><td>Kerala</td><td>78 dB</td><td>Traffic</td></tr>
+                    <tr><td>Madhya Pradesh</td><td>83 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Maharashtra</td><td>85 dB</td><td>Traffic</td></tr>
+                    <tr><td>Manipur</td><td>73 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Meghalaya</td><td>72 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Mizoram</td><td>70 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Nagaland</td><td>71 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Odisha</td><td>82 dB</td><td>Industry</td></tr>
+                    <tr><td>Punjab</td><td>84 dB</td><td>Traffic</td></tr>
+                    <tr><td>Rajasthan</td><td>82 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Sikkim</td><td>72 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Tamil Nadu</td><td>82 dB</td><td>Traffic</td></tr>
+                    <tr><td>Telangana</td><td>80 dB</td><td>Traffic</td></tr>
+                    <tr><td>Tripura</td><td>74 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>Uttar Pradesh</td><td>84 dB</td><td>Traffic</td></tr>
+                    <tr><td>Uttarakhand</td><td>75 dB</td><td>Urban Areas</td></tr>
+                    <tr><td>West Bengal</td><td>79 dB</td><td>Festivals</td></tr>
+                </tbody>
+            </table>
+            <img src="https://static.theprint.in/wp-content/uploads/2022/03/Web_Photo_Editor-40-1024x576.jpg" alt="Indian City" class="section-image">
+        </section>
+
+        
+
+        <section id="solutions">
+            <h2>How to Reduce Noise Pollution?</h2>
+            <div class="info-box">
+                <p>Several measures can be taken to mitigate noise pollution:</p>
+                <ul>
+                    <li><strong>Use of Soundproofing Materials:</strong> Installing soundproof walls and windows can significantly reduce noise transmission.</li>
+                    <li><strong>Regulating Traffic:</strong> Implementing better traffic management and quieter vehicles can reduce road noise.</li>
+                    <li><strong>Promoting Public Transportation:</strong> Reducing the number of private vehicles and encouraging public transportation helps reduce traffic noise.</li>
+                    <li><strong>Noise Barriers in Industrial Areas:</strong> Installing barriers and using quieter machinery can reduce industrial noise.</li>
+                    <li><strong>Avoiding Loud Cultural Events at Night:</strong> Limiting the duration and timing of festivals and celebrations can help mitigate noise pollution.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="personal-steps">
+            <h2>Personal Steps to Minimize Noise Pollution</h2>
+            <div class="info-box">
+                <p>As individuals, we can also take steps to reduce noise pollution in our surroundings:</p>
+                <ul>
+                    <li><strong>Use of Headphones:</strong> Listening to music with headphones instead of loudspeakers can help reduce noise in public spaces.</li>
+                    <li><strong>Drive Slowly and Quietly:</strong> Avoiding honking and driving at a moderate speed can reduce noise pollution.</li>
+                    <li><strong>Green Spaces:</strong> Planting trees and creating green spaces in urban areas can help absorb noise and reduce its impact.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Learn More</h2>
+            <p>To dive deeper into the impact of noise pollution, visit the following websites:</p>
+            <ul>
+            <li><a href="https://www.who.int/europe/news-room/fact-sheets/item/noise" target="_blank">World Health Organization: Noise Pollution</a></li>
+            <li><a href="https://www.data.gov.in/tag-cloud/9278" target="_blank">Data.gov.in: Noise Data</a></li>
+            <li><a href="https://www.nrdc.org/bio/regan-nelson/why-all-concern-about-underwater-ship-noise#:~:text=It%20is%20perhaps%20no%20surprise,jet%20engine%20at%20take%2Doff." target="_blank">Natural Resources Defense Council: Noise Pollution</a></li>
+            <li><a href="https://cpcb.nic.in/" target="_blank">Central Pollution Control Board of India: Noise Pollution</a></li>
+            </ul>
+        </section>
+    </div>
+    <footer>
+        <p>Raising awareness and promoting a quieter environment for all.</p>
+    </footer>
+
+    <!-- Leaflet JS for map functionality -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map centered on India
+        const map = L.map('indiaMap').setView([20.5937, 78.9629], 5);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Noise pollution data for all states
+        const noiseData = [
+            { state: "Andhra Pradesh", coordinates: [15.9129, 79.7400], avgNoise: "82 dB", mainSource: "Traffic" },
+            { state: "Arunachal Pradesh", coordinates: [28.2180, 94.7278], avgNoise: "70 dB", mainSource: "Urban Areas" },
+            { state: "Assam", coordinates: [26.2006, 92.9376], avgNoise: "76 dB", mainSource: "Industry" },
+            { state: "Bihar", coordinates: [25.0961, 85.3131], avgNoise: "83 dB", mainSource: "Traffic" },
+            { state: "Chhattisgarh", coordinates: [21.2787, 81.8661], avgNoise: "78 dB", mainSource: "Urban Areas" },
+            { state: "Delhi", coordinates: [28.7041, 77.1025], avgNoise: "88 dB", mainSource: "Industrial" },
+            { state: "Goa", coordinates: [15.2993, 74.1240], avgNoise: "74 dB", mainSource: "Tourism" },
+            { state: "Gujarat", coordinates: [22.2587, 71.1924], avgNoise: "84 dB", mainSource: "Industry" },
+            { state: "Haryana", coordinates: [29.0588, 76.0856], avgNoise: "85 dB", mainSource: "Traffic" },
+            { state: "Himachal Pradesh", coordinates: [31.1048, 77.1734], avgNoise: "72 dB", mainSource: "Urban Areas" },
+            { state: "Jharkhand", coordinates: [23.6102, 85.2799], avgNoise: "80 dB", mainSource: "Industry" },
+            { state: "Karnataka", coordinates: [15.3173, 75.7139], avgNoise: "80 dB", mainSource: "Construction" },
+            { state: "Kerala", coordinates: [10.8505, 76.2711], avgNoise: "78 dB", mainSource: "Traffic" },
+            { state: "Madhya Pradesh", coordinates: [22.9734, 78.6569], avgNoise: "83 dB", mainSource: "Urban Areas" },
+            { state: "Maharashtra", coordinates: [19.7515, 75.7139], avgNoise: "85 dB", mainSource: "Traffic" },
+            { state: "Manipur", coordinates: [24.6637, 93.9063], avgNoise: "73 dB", mainSource: "Urban Areas" },
+            { state: "Meghalaya", coordinates: [25.4670, 91.3662], avgNoise: "72 dB", mainSource: "Urban Areas" },
+            { state: "Mizoram", coordinates: [23.1645, 92.9376], avgNoise: "70 dB", mainSource: "Urban Areas" },
+            { state: "Nagaland", coordinates: [26.1584, 94.5624], avgNoise: "71 dB", mainSource: "Urban Areas" },
+            { state: "Odisha", coordinates: [20.9517, 85.0985], avgNoise: "82 dB", mainSource: "Industry" },
+            { state: "Punjab", coordinates: [31.1471, 75.3412], avgNoise: "84 dB", mainSource: "Traffic" },
+            { state: "Rajasthan", coordinates: [27.0238, 74.2179], avgNoise: "82 dB", mainSource: "Urban Areas" },
+            { state: "Sikkim", coordinates: [27.5330, 88.5122], avgNoise: "72 dB", mainSource: "Urban Areas" },
+            { state: "Tamil Nadu", coordinates: [11.1271, 78.6569], avgNoise: "82 dB", mainSource: "Traffic" },
+            { state: "Telangana", coordinates: [17.9784, 79.7400], avgNoise: "80 dB", mainSource: "Traffic" },
+            { state: "Tripura", coordinates: [23.9408, 91.9882], avgNoise: "74 dB", mainSource: "Urban Areas" },
+            { state: "Uttar Pradesh", coordinates: [26.8467, 80.9462], avgNoise: "84 dB", mainSource: "Traffic" },
+            { state: "Uttarakhand", coordinates: [30.0668, 79.0193], avgNoise: "75 dB", mainSource: "Urban Areas" },
+            { state: "West Bengal", coordinates: [22.9868, 87.8550], avgNoise: "79 dB", mainSource: "Festivals" }
+        ];
+
+        // Define custom icons with color styles
+        const redIcon = new L.Icon({
+            iconUrl: 'vecteezy_location-icon-design_9267042.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        const orangeIcon = new L.Icon({
+            iconUrl: 'vecteezy_location-icon-design_9266428.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        const yellowIcon = new L.Icon({
+            iconUrl: 'vecteezy_location-icon-design_9267840.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        const blueIcon = new L.Icon({
+            iconUrl: 'vecteezy_location-icon-design_9266832.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Modify getColor to return the appropriate icon
+        function getIcon(noiseLevel) {
+            if (noiseLevel > 85) return redIcon;
+            else if (noiseLevel > 80) return orangeIcon;
+            else if (noiseLevel > 75) return yellowIcon;
+            else return blueIcon;
+        }
+
+        // Add markers for each state with color-coded markers
+        noiseData.forEach(location => {
+            const icon = getIcon(location.avgNoise); // Get the icon based on noise level
+            const marker = L.marker(location.coordinates, { icon: icon }).addTo(map);
+            marker.bindPopup(`<b>${location.state}</b><br>Average Noise: ${location.avgNoise}<br>Main Source: ${location.mainSource}`);
+        });
+
+    </script>
+
+</body>
+</html>hf
